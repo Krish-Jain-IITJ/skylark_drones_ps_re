@@ -1,0 +1,64 @@
+{
+  "work_orders": {
+    "total_records": 176,
+    "fixes_applied": {
+      "quoted_strings_fixed": 0,
+      "missing_filled_none": 0,
+      "currency_parsed": 175,
+      "qty_split": 66,
+      "status_normalized": 23
+    },
+    "null_counts": {
+      "deal_name": 1,
+      "nature_of_work": 12,
+      "last_recurring_month": 161,
+      "execution_status": 4,
+      "data_delivery_date": 118,
+      "po_loi_date": 1,
+      "document_type": 14,
+      "probable_start": 18,
+      "probable_end": 19,
+      "bd_personnel": 11,
+      "has_software_platform": 139,
+      "last_invoice_date": 89,
+      "latest_invoice_no": 88,
+      "amount_excl_gst": 1,
+      "billed_excl_gst": 63,
+      "collected_incl_gst": 98,
+      "to_be_billed_excl_gst": 176,
+      "to_be_billed_incl_gst": 176,
+      "invoice_status": 64,
+      "wo_status": 74,
+      "billing_status": 148,
+      "collection_status": 176,
+      "collection_date": 176,
+      "ar_priority": 166,
+      "expected_billing_month": 176,
+      "actual_billing_month": 106,
+      "actual_collection_month": 176
+    }
+  },
+  "deals": {
+    "total_records": 346,
+    "fixes_applied": {
+      "header_rows_removed": 0,
+      "status_normalized": 0,
+      "sector_normalized": 338,
+      "currency_parsed": 165
+    },
+    "null_counts": {
+      "deal_name": 2,
+      "owner_code": 17,
+      "client_code": 2,
+      "deal_status": 3,
+      "close_date_actual": 318,
+      "closure_probability": 260,
+      "deal_value": 181,
+      "tentative_close_date": 74,
+      "deal_stage": 2,
+      "product_deal": 170,
+      "sector": 8,
+      "created_date": 1
+    }
+  }
+}
