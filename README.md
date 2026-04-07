@@ -57,6 +57,57 @@ python -m uvicorn main:app --reload --port 8000
 
 Open http://localhost:8000
 
+## Deploying on Vercel
+
+This project can be deployed on Vercel using a Python Serverless Function entrypoint.
+
+### 1. Add the Vercel config files
+- `api/index.py` should import the FastAPI app from `main.py`
+- `vercel.json` should route all requests to `/api/index.py`
+- `.vercelignore` should exclude `.venv`, `.git`, and `.env`
+
+### 2. Push your repo to GitHub
+Make sure the repository is published on GitHub and contains:
+- `main.py`
+- `requirements.txt`
+- `vercel.json`
+- `api/index.py`
+- `.vercelignore`
+
+### 3. Set environment variables in Vercel
+In your Vercel dashboard, go to Project Settings > Environment Variables and add:
+- `MONDAY_API_KEY`
+- `MONDAY_BOARD_WO`
+- `MONDAY_BOARD_DEALS`
+- `GROQ_API_KEY`
+- `ANTHROPIC_API_KEY`
+
+### 4. Deploy using Vercel CLI
+```powershell
+npm install -g vercel
+cd <your-project-folder>
+vercel login
+vercel
+```
+
+When prompted:
+- select or create your Vercel team
+- set project name
+- choose the root directory of this project
+- accept defaults for the Python function detection
+
+Then deploy production:
+```powershell
+vercel --prod
+```
+
+### 5. Verify the deployment
+Open the generated Vercel URL and test the root page.
+
+### Important notes
+- Vercel serverless functions have execution time limits, so if API calls are slow you may need a different host.
+- Do not store keys in `.env` for production; use Vercel environment variables instead.
+
 ## How Monday Board IDs work
 
 When you open a board in Monday.com, the URL looks like:
