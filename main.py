@@ -16,15 +16,9 @@ try:
 except ImportError:
     Groq = None
 
-try:
-    from groq import Groq
-except ImportError:
-    Groq = None
-
-
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 # print("API KEY:", GEMINI_API_KEY)
 
 app = FastAPI(title="Monday.com BI Agent")
@@ -37,8 +31,28 @@ MONDAY_BOARD_WO   = os.getenv("MONDAY_BOARD_WO", "")
 MONDAY_BOARD_DEALS = os.getenv("MONDAY_BOARD_DEALS", "")
 MONDAY_API_URL    = "https://api.monday.com/v2"
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-groq_client = Groq(api_key=GROQ_API_KEY) if Groq and GROQ_API_KEY else None
+groq_client = None
+groq_client_error = None
+
+def get_groq_client():
+    global groq_client, groq_client_error
+    if groq_client is not None or groq_client_error is not None:
+        return groq_client
+
+    if Groq is None:
+        groq_client_error = "groq package not installed"
+        return None
+
+    if not GROQ_API_KEY:
+        groq_client_error = "GROQ_API_KEY not configured"
+        return None
+
+    try:
+        groq_client = Groq(api_key=GROQ_API_KEY)
+        return groq_client
+    except Exception as exc:
+        groq_client_error = str(exc)
+        return None
 
 conversation_memory = []
 _BASE = Path(__file__).parent
@@ -186,14 +200,16 @@ DEALS SAMPLE (first 20 rows):
 {json.dumps(deals[:5], default=str)}
 """
 
-    if not groq_client:
-        raise Exception("GROQ_API_KEY not configured. Cannot perform query.")
+    client = get_groq_client()
+    if not client:
+        error_message = groq_client_error or "GROQ_API_KEY not configured. Cannot perform query."
+        raise Exception(error_message)
 
     trace.append({"step": "call_groq_api", "action": "Using Groq API",
                    "model": "llama-3.3-70b-versatile", "wo_records": len(wo), "deals_records": len(deals),
                   "query": query[:120], "timestamp": datetime.now().isoformat()})
 
-    chat_completion = groq_client.chat.completions.create(
+    chat_completion = client.chat.completions.create(
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": query}
@@ -220,17 +236,11 @@ async def handle_query(req: QueryRequest):
         "timestamp": t0.isoformat()
     })
 
-    # ✅ Check API keys
-    if not GROQ_API_KEY:
+    # ✅ Check API keys and Groq initialization
+    client = get_groq_client()
+    if client is None:
         return JSONResponse({
-            "answer": "⚠️ GROQ_API_KEY not set in .env",
-            "trace": trace,
-            "error": True
-        })
-
-    if groq_client is None:
-        return JSONResponse({
-            "answer": "⚠️ Groq client not initialized",
+            "answer": f"⚠️ {groq_client_error or 'Groq client not initialized'}",
             "trace": trace,
             "error": True
         })

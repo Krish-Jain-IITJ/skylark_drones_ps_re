@@ -20,14 +20,21 @@ FastAPI (Python) ──► Monday.com GraphQL API   (live board data)
 
 ## Setup
 
-### 1. Install dependencies
-```bash
-pip install -r requirements.txt
+### 1. Create and activate the virtual environment
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 ```
 
-### 2. Configure .env
-```bash
-cp .env.example .env
+### 2. Install dependencies
+```powershell
+python -m pip install -r requirements.txt
+```
+
+### 3. Configure .env
+```powershell
+copy .env.example .env
 # Edit .env with your actual keys
 ```
 
@@ -35,16 +42,17 @@ Required keys:
 - `MONDAY_API_KEY` — Monday.com API key (Admin > API)
 - `MONDAY_BOARD_WO` — Work Orders board ID (from board URL)
 - `MONDAY_BOARD_DEALS` — Deals board ID (from board URL)
+- `GROQ_API_KEY` — Groq API key for LLM access
 - `ANTHROPIC_API_KEY` — Anthropic API key
 
-### 3. Import data to Monday.com
+### 4. Import data to Monday.com
 - Import `Work_Order_Tracker_Data.xlsx` as a new board → "Work Orders"
 - Import `Deal_funnel_Data.xlsx` as a new board → "Deals"
 - Note the board IDs from the URLs and add to `.env`
 
-### 4. Run
-```bash
-uvicorn main:app --reload --port 8000
+### 5. Run
+```powershell
+python -m uvicorn main:app --reload --port 8000
 ```
 
 Open http://localhost:8000
